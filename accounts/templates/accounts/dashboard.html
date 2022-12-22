@@ -19,6 +19,7 @@
           </tr>
           {% for i in customers %}
           <tr>
+            <td>hllo</td>
             <td><a class="btn btn-sm btn-primary" href="{% url 'customers' id=i.id %}">View</a></td>
             <td>{{ i.name }}</td>
             <td>{{ i.phone }}</td>

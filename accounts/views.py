@@ -53,6 +53,7 @@ def login_page(request):
 @admin_only
 def home(request):
   customer_list = Customer.objects.all()
+  print(customer_list)
   orders_list = Order.objects.all()
   orders_count = orders_list.count()
   orders_delivered = orders_list.filter(status = "Delivered").count()
