@@ -19,7 +19,11 @@ def register_page(request):
   if(request.method == "POST"):
     form = CreateUserForm(request.POST)
     if form.is_valid:
-      user = form.save()
+      try:
+        user = form.save()
+      except:
+        messages.error(request,f'Enter appropraite details')
+        return redirect('register')
       username = form.cleaned_data.get('username')
       messages.success(request,f'Account was created for {username}')
       return redirect('login')
