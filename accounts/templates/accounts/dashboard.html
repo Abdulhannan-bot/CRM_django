@@ -1,7 +1,8 @@
 {% extends "accounts/main.html" %}
 {% load static %}
-{% block content %}
 
+{% block content %}
+{% load accounts_extras %}
 {% include "accounts/status.html" %}
 
 <br>
@@ -10,6 +11,10 @@
     <h5 class="text-center">CUSTOMERS</h5>
     <hr>
     <div class="card card-body">
+        <form method="get">
+          {{ my_filter_customer.form }}
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
         <!-- <a class="btn btn-primary btn-small btn-block" href="">Create Customer</a> -->
         <table class="table table-sm orders-table">
           <tr>
@@ -17,14 +22,23 @@
             <th>Customer</th>
             <th>Phone</th>
           </tr>
-          {% for i in customers %}
+          {% for i in page_customer.object_list %}
           <tr>
-            <td>hllo</td>
             <td><a class="btn btn-sm btn-primary" href="{% url 'customers' id=i.id %}">View</a></td>
             <td>{{ i.name }}</td>
             <td>{{ i.phone }}</td>
           </tr>
           {% endfor %}
+          <div class="page-links">
+            {% if page_customer.has_previous %}
+            <!-- <a href="{% url 'home' %}?page_customer={{ page_customer.previous_page_number }}">Previous</a> -->
+            <a href="{% my_url value=page_customer.previous_page_number field_name='page_customer' urlencode=request.GET.urlencode %}">Previous</a>
+            {% endif %}
+            {% if page_customer.has_next %}
+            <!-- <a href="{% url 'home' %}?page_customer={{ page_customer.next_page_number }}">Next</a> -->
+            <a href="{% my_url value=page_customer.next_page_number field_name='page_customer' urlencode=request.GET.urlencode %}">Next</a>
+            {% endif %}
+          </div>
         </table>
     </div>
   </div>
@@ -33,6 +47,10 @@
     <h5 class="text-center">ORDERS</h5>
     <hr>
     <div class="card card-body">
+      <form method="get">
+        {{ my_filter_order.form }}
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
         <table class="table table-sm">
           <tr>
             <th>Product</th>
@@ -42,7 +60,16 @@
             <th>Remove</th>
           </tr>
 
-          {% for i in orders %}
+          <!-- {% for i in orders %}
+          <tr>
+            <td>{{ i.product }}</td>
+            <td>{{ i.date_created }}</td>
+            <td>{{ i.status }}</td>
+            <td><a class="btn btn-sm btn-info" href="{% url 'update_order' id=i.id %}">Update</a></td>
+            <td><a class="btn btn-sm btn-danger" href="{% url 'delete' id=i.id %}">Delete</a></td>
+          </tr>
+          {% endfor %} -->
+          {% for i in page_order.object_list %}
           <tr>
             <td>{{ i.product }}</td>
             <td>{{ i.date_created }}</td>
@@ -51,12 +78,26 @@
             <td><a class="btn btn-sm btn-danger" href="{% url 'delete' id=i.id %}">Delete</a></td>
           </tr>
           {% endfor %}
+          <!-- {% for i in page.object_list %}
+          <tr>
+            <p class="text-center">{{ i }}</p>
+          </tr>
+          {% endfor %} -->
+          <div class="page-links">
+            {% if page_order.has_previous %}
+            <!-- <a href="{% url 'home' %}?page_order={{ page_order.previous_page_number }}">Previous</a> -->
+            <a href="{% my_url value=page_order.previous_page_number field_name='page_order' urlencode=request.GET.urlencode %}">Previous</a>
+            {% endif %}
+            {% if page_order.has_next %}
+            <!-- <a href="{% url 'home' %}?page_order={{ page_order.next_page_number }}">Next</a> -->
+            <a href="{% my_url value=page_order.next_page_number field_name='page_order' urlencode=request.GET.urlencode %}">Next</a>
+            {% endif %}
+          </div>
         </table>
     </div>
   </div>
 
 </div>
-
 
 
 

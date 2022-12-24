@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import mimetypes
+mimetypes.add_type("text/css",".css",True)
+from django.core.management.utils import get_random_secret_key
+
+a = get_random_secret_key()
+print(a)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,14 +39,13 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'accounts.apps.AccountsConfig',
-    'accounts',
     'django_filters',
 ]
 
@@ -67,6 +73,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+        # 'libraries': {
+        #     'accounts_extras': 'app.templatetags.accounts_extras'
+        # }
         },
     },
 ]
@@ -122,18 +131,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-if DEBUG:
-    STATICFILES_DIRS = [
-        os.path.join(BASE_DIR,'static')
-    ]
-else:
-    STATIC_ROOT = os.path.join(BASE_DIR,'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# if DEBUG:
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,'static')
+]
+# else:
+# STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
-MEDIA_URL = '/images/'
+MEDIA_URL = '/media/'
 
 
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'static/images')
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 
 # Default primary key field type

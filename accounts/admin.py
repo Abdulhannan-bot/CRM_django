@@ -16,6 +16,7 @@ class ProductAdmin(admin.ModelAdmin):
   search_fields = ['name']
   readonly_fields = ['date_created']
 
+
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Tag)
 admin.site.register(Order)

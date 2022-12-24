@@ -6,11 +6,24 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.core.paginator import Paginator
+
 
 from .models import *
 from .forms import *
-from .filters import OrderFilter
+from .filters import *
 from .decorators import *
+
+# customer = Customer.objects.create(request.user, f'name - {i+1}', f'{1}'*10, f'{i}@gmail.com')
+def generate(Customer, Order, Product):
+  print('hello')
+  # Customer.objects.delete()
+  # for i in range(0,100):
+  #   customer = Customer.objects.create(name = f'name - {i+1}', phone = f'{1}'*10, email = f'{i}@gmail.com')
+  #   print(f'customer name = {customer.name}')
+  #   # Customer.objects.create(customer)
+  #   # product = Product.objects.create(name = f'product = {i+1}', price = i*100, category = 'Indoor', description = '-')
+  #   orders = Order.objects.create(status =  'Pending')
 
 
 @unauthenticated_user
@@ -52,19 +65,42 @@ def login_page(request):
 @login_required(login_url = 'login')
 @admin_only
 def home(request):
+  
   customer_list = Customer.objects.all()
-  print(customer_list)
-  orders_list = Order.objects.all()
+
+  my_filter_customer = CustomerFilter(request.GET, queryset = customer_list)
+  customer_list = my_filter_customer.qs
+  paginator_customer = Paginator(customer_list, 9)
+  # print(f'paginator_customer {paginator_customer.objects_set.all()}')
+  page_number_customer = request.GET.get('page_customer')
+  print(f'page number {page_number_customer}')
+  page_customer = paginator_customer.get_page(page_number_customer)
+
+  orders = Order.objects.all()
+  my_filter_order = OrderFilter(request.GET, queryset = orders)
+  orders_list = my_filter_order.qs
+  paginator_order = Paginator(orders_list, 9)
+  page_number_order = request.GET.get('page_order')
+  page_order = paginator_order.get_page(page_number_order)
+
   orders_count = orders_list.count()
   orders_delivered = orders_list.filter(status = "Delivered").count()
   orders_pending = orders_list.filter(status = "Pending").count()
+  print(request.user)
+  # for i in page.object_list:
+  #   print(i.product)
+
   context = {
     "customers": customer_list,
     "orders": orders_list,
     "orders_count": orders_count,
     "orders_delivered": orders_delivered,
     "orders_pending": orders_pending,
-    "limit":0
+    # "count": paginator.count,
+    "page_customer": page_customer,
+    "page_order": page_order,
+    "my_filter_customer": my_filter_customer,
+    "my_filter_order": my_filter_order,
   }
   return render(request, 'accounts/dashboard.html', context = context)
 
@@ -92,8 +128,13 @@ def account_settings(request):
   form = CustomerForm(instance=customer)
   if request.method == 'POST':
     form = CustomerForm(request.POST, request.FILES, instance=customer)
+    print(request.FILES)
+    print(customer.profile_pic.url)
     if form.is_valid:
       form.save()
+    else:
+      print(form.errors)
+      print(form.is_bound())
   context = {
     "form": form,
   }
@@ -115,9 +156,9 @@ def products(request):
 def customers(request, id):
   customer = Customer.objects.get(id=id)
   orders = customer.order_set.all()
-  orders_count = orders.count()
   my_filter = OrderFilter(request.GET, queryset = orders)
   orders = my_filter.qs
+  orders_count = orders.count()
   context = {
     "customer": customer,
     "orders": orders,
