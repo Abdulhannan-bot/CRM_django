@@ -1,5 +1,5 @@
 {% extends "accounts/main.html" %}
-
+{% load accounts_extras %}
 {% block content %}
   <br>
   <div class="row">
@@ -8,19 +8,33 @@
         <h5>Products</h5>
       </div>
       <div class="card card-body">
+        <form method="get">
+          {{ my_filter_product.form }}
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
         <table class="table">
           <tr>
             <th>Product</th>
             <th>Category</th>
             <th>Price</th>
           </tr>
-          {% for i in products %}
+          {% for i in page_product.object_list %}
           <tr>
             <td>{{ i.name }}</td>
             <td>{{ i.category }}</td>
             <td>{{ i.price }}</td>
           </tr>
           {% endfor %}
+          <div class="page-links">
+            {% if page_product.has_previous %}
+            <!-- <a href="{% url 'home' %}?page_customer={{ page_customer.previous_page_number }}">Previous</a> -->
+            <a href="{% my_url value=page_product.previous_page_number field_name='page_product' urlencode=request.GET.urlencode %}">Previous</a>
+            {% endif %}
+            {% if page_product.has_next %}
+            <!-- <a href="{% url 'home' %}?page_customer={{ page_customer.next_page_number }}">Next</a> -->
+            <a href="{% my_url value=page_product.next_page_number field_name='page_product' urlencode=request.GET.urlencode %}">Next</a>
+            {% endif %}
+          </div>
         </table>
       </div>
     </div>

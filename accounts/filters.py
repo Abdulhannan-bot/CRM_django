@@ -18,3 +18,11 @@ class CustomerFilter(django_filters.FilterSet):
     model = Customer
     fields = '__all__'
     exclude = ['user','date_created', 'profile_pic']  
+
+class ProductFilter(django_filters.FilterSet):
+  # start_date = DateFilter(field_name="date_created", lookup_expr="gte")
+  # end_date = DateFilter(field_name="date_created", lookup_expr="lte")
+  class Meta:
+    model = Product
+    fields = '__all__'
+    exclude = ['date_created', 'tags', 'description']  

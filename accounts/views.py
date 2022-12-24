@@ -82,6 +82,7 @@ def home(request):
   paginator_order = Paginator(orders_list, 9)
   page_number_order = request.GET.get('page_order')
   page_order = paginator_order.get_page(page_number_order)
+  print(orders.count()/9)
 
   orders_count = orders_list.count()
   orders_delivered = orders_list.filter(status = "Delivered").count()
@@ -145,8 +146,16 @@ def account_settings(request):
 @allowed_users(allowed_roles = ['admins'])
 def products(request):
   products_list = Product.objects.all()
+  my_filter_product = ProductFilter(request.GET, queryset = products_list)
+  products_list = my_filter_product.qs
+  paginator_product = Paginator(products_list, 9)
+  
+  page_number_product = request.GET.get('page_product')
+  page_product = paginator_product.get_page(page_number_product)
   context = {
     "products": products_list,
+    "my_filter_product": my_filter_product,
+    "page_product": page_product,
   }
   return render(request, 'accounts/products.html', context = context)
 
